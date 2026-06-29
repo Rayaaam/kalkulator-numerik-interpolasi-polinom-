@@ -44,7 +44,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
 }
 
 export function ResultsView({ onGoToInput, dataHasil }: ResultsViewProps) {
-  // Pakai data asli, bukan mock data lagi
+  
   const targetX = dataHasil?.targetX ?? 0;
   const predictedY = dataHasil?.resultY ?? 0;
 
@@ -224,9 +224,19 @@ export function ResultsView({ onGoToInput, dataHasil }: ResultsViewProps) {
                       <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">i</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">x_i</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">f[x_i] (Orde 0)</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Δ¹ (Orde 1)</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Δ² (Orde 2)</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Δ³ (Orde 3)</th>
+                      {/* Pakai ternary operator buat nentuin simbol otomatis */}
+                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        {method?.toLowerCase().includes("mundur") ? "∇" : "Δ"}¹ (Orde 1)
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        {method?.toLowerCase().includes("mundur") ? "∇" : "Δ"}² (Orde 2)
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        {method?.toLowerCase().includes("mundur") ? "∇" : "Δ"}³ (Orde 3)
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        {method?.toLowerCase().includes("mundur") ? "∇" : "Δ"}⁴ (Orde 4)
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
@@ -239,6 +249,7 @@ export function ResultsView({ onGoToInput, dataHasil }: ResultsViewProps) {
                         <td className="px-4 py-3 font-mono text-muted-foreground">{row.d1}</td>
                         <td className="px-4 py-3 font-mono text-muted-foreground">{row.d2}</td>
                         <td className="px-4 py-3 font-mono text-muted-foreground">{row.d3}</td>
+                        <td className="px-4 py-3 font-mono text-muted-foreground">{row.d4}</td>
                       </tr>
                     ))}
                   </tbody>

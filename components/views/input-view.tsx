@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTable } from "@/components/data-table";
 import { ConfigSidebar } from "@/components/config-sidebar";
 import { Database } from "lucide-react";
@@ -21,6 +21,19 @@ const initialData = [
 
 export function InputView({ onCalculate }: InputViewProps) {
   const [data, setData] = useState(initialData);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem("dataKalkulatorGua");
+    if (savedData) {
+      setData(JSON.parse(savedData));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      localStorage.setItem("dataKalkulatorGua", JSON.stringify(data));
+    }
+  }, [data]);
 
   const handleEdit = (id: number, field: "x" | "y", value: string) => {
     // Ubah inputan string jadi angka

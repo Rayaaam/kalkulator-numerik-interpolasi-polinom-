@@ -20,8 +20,8 @@ interface ConfigSidebarProps {
 const interpolationMethods = [
   { value: "lagrange", label: "Lagrange Polynom" },
   { value: "newton", label: "Newton Polynom" },
-  { value: "newton-gregory", label: "Newton-Gregory Polynom Maju" },
-  { value: "newton-gregory-mundur", label: "Newton-Gregory Polynom Mundur" },
+  { value: "newton-gregory", label: "Newton-Gregory Maju" },
+  { value: "newton-gregory-mundur", label: "Newton-Gregory Mundur" },
 ];
 
 export function ConfigSidebar({ onCalculate }: ConfigSidebarProps) {
@@ -59,7 +59,7 @@ export function ConfigSidebar({ onCalculate }: ConfigSidebarProps) {
           id="target-x"
           type="number"
           step="any"
-          placeholder="Enter X value..."
+          placeholder="Masukkan Nilai x..."
           value={targetX}
           onChange={(e) => setTargetX(e.target.value)}
           className="rounded-xl bg-muted/50 border-border focus:border-primary focus:ring-primary/20 h-12"

@@ -1,5 +1,5 @@
 // lib/interpolations.ts
-// Kita bikin tipe data khusus buat nyimpen koordinat X dan Y
+// bikin tipe data khusus buat nyimpen koordinat X dan Y
 export type Point = {
   x: number;
   y: number;
@@ -81,7 +81,7 @@ export function hitungNewton(points: { x: number; y: number }[], targetX: number
     equationString += ` ${sign} ${Math.abs(koefisien).toFixed(4)}${termStr}`;
   }
 
-  // 5. Format hasil tabel ST biar rapi pas dikirim ke UI lu
+  // 5. Format hasil tabel ST biar rapi pas dikirim ke UI
   const dividedDifferenceTable = points.map((p, i) => ({
     i: i,
     x: p.x,
@@ -97,7 +97,7 @@ export function hitungNewton(points: { x: number; y: number }[], targetX: number
     targetX,
     resultY,
     equationString,
-    dividedDifferenceTable // <--- Data tabel selisih terbaginya nih!
+    dividedDifferenceTable 
   };
 }
 
@@ -159,7 +159,7 @@ export function hitungNewtonGregory(points: { x: number; y: number }[], targetX:
     targetX,
     resultY,
     equationString,
-    sValue: s, // Kita kirim nilai 's' buat ditampilin di rumus
+    sValue: s, // kirim nilai 's' buat ditampilin di rumus
     dividedDifferenceTable
   };
 }
@@ -201,22 +201,28 @@ export function hitungNewtonGregoryMundur(points: { x: number; y: number }[], ta
     // Bikin string penjabaran rumus
     let sEq = "s";
     for(let k = 1; k < i; k++) {
-        sEq += `(s + ${k})`; // Ingat, kalau mundur jadi (s + k)
+        sEq += `(s + ${k})`; //  mundur jadi (s + k)
     }
     const koefisien = st[n - 1][i] / fact;
     const sign = koefisien >= 0 ? "+" : "-";
     equationString += ` ${sign} ${Math.abs(koefisien).toFixed(4)}${sEq}`;
   }
 
-  // Siapin data tabel UI (Tampilannya bakal ngebentuk segitiga siku-siku kebalikan)
-  const dividedDifferenceTable = points.map((p, i) => ({
-    i: i,
+  // hasil data tabel UI (segitiga siku-siku kebalikan)
+  const dividedDifferenceTable = points.map((p, i) => {
+  let rowData: any = {
+    i: i - ( n - 1),
     x: p.x,
     y: st[i][0].toFixed(4),
-    d1: i >= 1 ? st[i][1].toFixed(4) : "—",
-    d2: i >= 2 ? st[i][2].toFixed(4) : "—",
-    d3: i >= 3 ? st[i][3].toFixed(4) : "—",
-  }));
+  };
+
+  // Looping dinamis bikin d1, d2, d3, d4, dst sesuai jumlah data (n)
+  for (let col = 1; col < n; col++) {
+    rowData[`d${col}`] = i >= col ? st[i][col].toFixed(4) : "-";
+  }
+
+  return rowData;
+});
 
   return {
     method: "newton-gregory-mundur",
