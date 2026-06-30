@@ -1,5 +1,5 @@
 // lib/interpolations.ts
-// bikin tipe data khusus buat nyimpen koordinat X dan Y
+// tipe data khusus buat nyimpen koordinat X dan Y
 export type Point = {
   x: number;
   y: number;
@@ -43,12 +43,16 @@ export function hitungLagrange(points: Point[], targetX: number) {
   };
 }
 // Fungsi utama Polinom newton
-export function hitungNewton(points: { x: number; y: number }[], targetX: number) {
+export function hitungNewton(
+  points: { x: number; y: number }[],
+  targetX: number,
+) {
   const n = points.length;
-  
+
   // 1. Bikin matriks 2D buat nyimpen Tabel Selisih Terbagi (ST)
-  // Bentuknya bakal kayak segitiga siku-siku
-  const st: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
+  const st: number[][] = Array(n)
+    .fill(0)
+    .map(() => Array(n).fill(0));
 
   // 2. Isi kolom pertama (Y / orde 0) dengan data titik asli
   for (let i = 0; i < n; i++) {
@@ -58,7 +62,8 @@ export function hitungNewton(points: { x: number; y: number }[], targetX: number
   // 3. Hitung Selisih Terbagi buat kolom-kolom berikutnya (Δ¹, Δ², Δ³)
   for (let j = 1; j < n; j++) {
     for (let i = 0; i < n - j; i++) {
-      st[i][j] = (st[i + 1][j - 1] - st[i][j - 1]) / (points[i + j].x - points[i].x);
+      st[i][j] =
+        (st[i + 1][j - 1] - st[i][j - 1]) / (points[i + j].x - points[i].x);
     }
   }
 
@@ -68,7 +73,7 @@ export function hitungNewton(points: { x: number; y: number }[], targetX: number
   let equationString = `P(x) = ${st[0][0].toFixed(4)}`;
 
   for (let i = 1; i < n; i++) {
-    term *= (targetX - points[i - 1].x);
+    term *= targetX - points[i - 1].x;
     resultY += st[0][i] * term; // st[0][i] itu koefisien a1, a2, a3, dst.
 
     // Bikin string penjabaran rumus dinamis buat ditampilin di UI
@@ -86,7 +91,7 @@ export function hitungNewton(points: { x: number; y: number }[], targetX: number
     i: i,
     x: p.x,
     y: st[i][0].toFixed(4),
-    // Pengecekan biar baris bawah yang kosong diganti tanda strip "—"
+    // baris bawah yang kosong diganti tanda strip "—"
     d1: i + 1 < n ? st[i][1].toFixed(4) : "—",
     d2: i + 2 < n ? st[i][2].toFixed(4) : "—",
     d3: i + 3 < n ? st[i][3].toFixed(4) : "—",
@@ -97,14 +102,19 @@ export function hitungNewton(points: { x: number; y: number }[], targetX: number
     targetX,
     resultY,
     equationString,
-    dividedDifferenceTable 
+    dividedDifferenceTable,
   };
 }
-
-export function hitungNewtonGregory(points: { x: number; y: number }[], targetX: number) {
+// Newton Gregory
+export function hitungNewtonGregory(
+  points: { x: number; y: number }[],
+  targetX: number,
+) {
   const n = points.length;
   // Bikin matriks buat Tabel Selisih Maju
-  const st: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
+  const st: number[][] = Array(n)
+    .fill(0)
+    .map(() => Array(n).fill(0));
 
   // Hitung 'h' (jarak antar titik X). Asumsi jarak X selalu konstan.
   const h = n > 1 ? points[1].x - points[0].x : 1;
@@ -129,22 +139,22 @@ export function hitungNewtonGregory(points: { x: number; y: number }[], targetX:
   let equationString = `P(x) = ${st[0][0].toFixed(4)}`;
 
   for (let i = 1; i < n; i++) {
-    sTerm *= (s - (i - 1));
+    sTerm *= s - (i - 1);
     fact *= i;
     const termValue = (st[0][i] * sTerm) / fact;
     resultY += termValue;
 
     // Bikin string penjabaran rumus (pakai variabel s)
     let sEq = "s";
-    for(let k = 1; k < i; k++) {
-        sEq += `(s - ${k})`;
+    for (let k = 1; k < i; k++) {
+      sEq += `(s - ${k})`;
     }
     const koefisien = st[0][i] / fact;
     const sign = koefisien >= 0 ? "+" : "-";
     equationString += ` ${sign} ${Math.abs(koefisien).toFixed(4)}${sEq}`;
   }
 
-  // Siapin data tabel buat UI
+  // data tabel buat UI
   const dividedDifferenceTable = points.map((p, i) => ({
     i: i,
     x: p.x,
@@ -160,14 +170,19 @@ export function hitungNewtonGregory(points: { x: number; y: number }[], targetX:
     resultY,
     equationString,
     sValue: s, // kirim nilai 's' buat ditampilin di rumus
-    dividedDifferenceTable
+    dividedDifferenceTable,
   };
 }
-
-export function hitungNewtonGregoryMundur(points: { x: number; y: number }[], targetX: number) {
+// Newton Gregory Mundur
+export function hitungNewtonGregoryMundur(
+  points: { x: number; y: number }[],
+  targetX: number,
+) {
   const n = points.length;
   // Bikin matriks buat Tabel Selisih Mundur
-  const st: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
+  const st: number[][] = Array(n)
+    .fill(0)
+    .map(() => Array(n).fill(0));
   const h = n > 1 ? points[1].x - points[0].x : 1;
 
   for (let i = 0; i < n; i++) {
@@ -184,7 +199,7 @@ export function hitungNewtonGregoryMundur(points: { x: number; y: number }[], ta
   // Target s patokannya dari X paling akhir (xn)
   const xn = points[n - 1].x;
   const s = (targetX - xn) / h;
-  
+
   // Ambil nilai awalan dari ujung bawah kanan tabel (st[n-1][0])
   let resultY = st[n - 1][0];
   let sTerm = 1;
@@ -193,15 +208,15 @@ export function hitungNewtonGregoryMundur(points: { x: number; y: number }[], ta
   let equationString = `P(x) = ${st[n - 1][0].toFixed(4)}`;
 
   for (let i = 1; i < n; i++) {
-    sTerm *= (s + (i - 1)); // Kalau mundur, ininya ditambah (+)
+    sTerm *= s + (i - 1); // Kalau mundur, ininya ditambah (+)
     fact *= i;
     const termValue = (st[n - 1][i] * sTerm) / fact;
     resultY += termValue;
 
-    // Bikin string penjabaran rumus
+    // string penjabaran rumus
     let sEq = "s";
-    for(let k = 1; k < i; k++) {
-        sEq += `(s + ${k})`; //  mundur jadi (s + k)
+    for (let k = 1; k < i; k++) {
+      sEq += `(s + ${k})`; //  mundur jadi (s + k)
     }
     const koefisien = st[n - 1][i] / fact;
     const sign = koefisien >= 0 ? "+" : "-";
@@ -210,26 +225,26 @@ export function hitungNewtonGregoryMundur(points: { x: number; y: number }[], ta
 
   // hasil data tabel UI (segitiga siku-siku kebalikan)
   const dividedDifferenceTable = points.map((p, i) => {
-  let rowData: any = {
-    i: i - ( n - 1),
-    x: p.x,
-    y: st[i][0].toFixed(4),
-  };
+    let rowData: any = {
+      i: i - (n - 1),
+      x: p.x,
+      y: st[i][0].toFixed(4),
+    };
 
-  // Looping dinamis bikin d1, d2, d3, d4, dst sesuai jumlah data (n)
-  for (let col = 1; col < n; col++) {
-    rowData[`d${col}`] = i >= col ? st[i][col].toFixed(4) : "-";
-  }
+    // Looping dinamis bikin d1, d2, d3, d4, dst sesuai jumlah data (n)
+    for (let col = 1; col < n; col++) {
+      rowData[`d${col}`] = i >= col ? st[i][col].toFixed(4) : "-";
+    }
 
-  return rowData;
-});
+    return rowData;
+  });
 
   return {
     method: "newton-gregory-mundur",
     targetX,
     resultY,
     equationString,
-    sValue: s, 
-    dividedDifferenceTable
+    sValue: s,
+    dividedDifferenceTable,
   };
 }
